@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Parameter Formatter</title>
+    <title>SharePoint Library ID Formatter</title>
     <style>
         * {
             margin: 0;
@@ -30,11 +30,25 @@
             width: 100%;
         }
 
+        .main-view, .help-view {
+            display: none;
+        }
+
+        .main-view.active, .help-view.active {
+            display: block;
+        }
+
         h1 {
             color: #333;
             margin-bottom: 30px;
             text-align: center;
             font-size: 28px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
 
         .input-section {
@@ -69,6 +83,10 @@
         .button-container {
             text-align: center;
             margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
@@ -91,6 +109,26 @@
 
         button:active {
             transform: translateY(0);
+        }
+
+        .help-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+            padding: 12px 30px;
+            font-size: 14px;
+        }
+
+        .help-btn:hover {
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #a8a8a8 0%, #7a7a7a 100%);
+            box-shadow: 0 4px 15px rgba(168, 168, 168, 0.4);
+        }
+
+        .back-btn:hover {
+            box-shadow: 0 6px 20px rgba(168, 168, 168, 0.6);
         }
 
         .output-section {
@@ -137,32 +175,170 @@
         .status-message.show {
             opacity: 1;
         }
+
+        /* Help page styles */
+        .help-content {
+            line-height: 1.8;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .step-description {
+            color: #555;
+            margin-left: 42px;
+        }
+
+        .tip-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box strong {
+            color: #1976D2;
+        }
+
+        .visual-example {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔗 URL Parameter Formatter</h1>
-        
-        <div class="input-section">
-            <label for="input">Encoded URL Parameters:</label>
-            <textarea id="input" placeholder="Paste your encoded URL parameters here..."></textarea>
-        </div>
+        <!-- Main View -->
+        <div class="main-view active">
+            <h1>🔗 SharePoint Library ID Formatter</h1>
+            
+            <div class="input-section">
+                <label for="input">Paste Library ID (from Sync):</label>
+                <textarea id="input" placeholder="Paste your Library ID here..."></textarea>
+            </div>
 
-        <div class="button-container">
-            <button onclick="convertUrl()">Convert</button>
-        </div>
+            <div class="button-container">
+                <button onclick="convertUrl()">Convert</button>
+                <button class="help-btn" onclick="showHelp()">📚 How to Find SharePoint URL</button>
+            </div>
 
-        <div class="output-section">
-            <label for="output">Formatted URL Parameters:</label>
-            <div class="output-container">
-                <div class="output-box">
-                    <textarea id="output" readonly placeholder="Formatted output will appear here..."></textarea>
+            <div class="output-section">
+                <label for="output">Formatted Library ID:</label>
+                <div class="output-container">
+                    <div class="output-box">
+                        <textarea id="output" readonly placeholder="Formatted output will appear here..."></textarea>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
                 </div>
-                <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+
+        <!-- Help View -->
+        <div class="help-view">
+            <h1>📚 How to Find Your SharePoint Library ID</h1>
+            
+            <div class="help-content">
+                <p style="color: #555; margin-bottom: 30px;">Follow these simple steps to get your SharePoint Library ID parameters:</p>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Open SharePoint Library
+                    </div>
+                    <div class="step-description">
+                        Navigate to your SharePoint library in your web browser (Chrome, Edge, Firefox, etc.).
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Click the Sync Button
+                    </div>
+                    <div class="step-description">
+                        Look for the <strong>Sync</strong> button in the toolbar (usually near the top of the page). Click it to start the sync process.
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Wait for Dialog Box
+                    </div>
+                    <div class="step-description">
+                        A dialog box will appear saying "We are syncing your files" or similar message. Don't close this dialog!
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Copy Library ID
+                    </div>
+                    <div class="step-description">
+                        In the sync dialog box, look for a link or button that says <strong>"Copy library ID"</strong> or similar. Click it to copy the encoded parameters to your clipboard.
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">5</span>
+                        Paste into Formatter
+                    </div>
+                    <div class="step-description">
+                        Return to the URL Formatter and paste the Library ID into the input box. Click <strong>Convert</strong> to get the formatted version!
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <strong>💡 Pro Tip:</strong> The copied Library ID contains all the parameters you need (tenantId, siteId, webId, listId, etc.). Just paste it directly into the formatter - no need to edit anything first!
+                </div>
+
+                <div class="visual-example">
+                    <strong>Example of what you'll copy:</strong><br><br>
+                    tenantId=dba914be%2D6619%2D412f%2D96ab%2Db0d46024e59a&siteId=%7B5cc3cb65%2D3673%2D4c32%2D85ad%2D1e17b7fcfcc2%7D&...
+                </div>
+            </div>
+
+            <div class="button-container" style="margin-top: 30px;">
+                <button class="back-btn" onclick="showMain()">← Back to Formatter</button>
             </div>
         </div>
-
-        <div class="status-message" id="statusMessage"></div>
     </div>
 
     <script>
@@ -214,6 +390,16 @@
             setTimeout(() => {
                 statusEl.classList.remove('show');
             }, 3000);
+        }
+
+        function showHelp() {
+            document.querySelector('.main-view').classList.remove('active');
+            document.querySelector('.help-view').classList.add('active');
+        }
+
+        function showMain() {
+            document.querySelector('.help-view').classList.remove('active');
+            document.querySelector('.main-view').classList.add('active');
         }
 
         // Allow Enter key to trigger conversion
